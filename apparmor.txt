@@ -6,6 +6,11 @@ profile retroassembly flags=(attach_disconnected,mediate_deleted) {
   # Capabilities
   file,
   signal (send) set=(kill,term,int,hup,cont),
+  capability chown,
+  capability dac_override,
+  capability setgid,
+  capability setuid,
+  capability net_bind_service,
 
   # S6-Overlay
   /init ix,

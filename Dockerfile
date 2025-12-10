@@ -11,6 +11,9 @@ RUN apk add --no-cache git python3 make g++
 # Clone repository
 RUN git clone --depth 1 --branch ${RETROASSEMBLY_VERSION} https://github.com/arianrhodsandlot/retroassembly.git .
 
+# Enable and download pnpm
+RUN npm i -g pnpm
+
 # HA Ingress: Apply minimal patch to make routes relative
 RUN sed -i "s|: '/|: '|g" src/pages/routes.ts
 
@@ -18,8 +21,8 @@ RUN sed -i "s|: '/|: '|g" src/pages/routes.ts
 RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/hooks/use-is-apple.ts
 RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/components/game-buttons/game-buttons.tsx
 
-# Enable and download pnpm
-RUN npm i -g pnpm
+# Create directory for default nginx error log to silence alerts
+RUN mkdir -p /var/lib/nginx/logs && ln -sf /dev/stderr /var/lib/nginx/logs/error.log
 
 # Install dependencies and build
 RUN pnpm install
