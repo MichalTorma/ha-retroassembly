@@ -5,4 +5,4 @@ if [ -d "/app/data" ]; then rm -rf /app/data; fi
 ln -s /data/retroassembly /app/data
 
 cd /app
-exec node --run=start
+exec npm run start
