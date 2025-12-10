@@ -16,5 +16,4 @@ options:
   port: 8000
 schema:
   port: port
-image: "ha-retroassembly-{arch}"
 startup: application
