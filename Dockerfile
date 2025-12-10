@@ -14,6 +14,10 @@ RUN git clone --depth 1 --branch ${RETROASSEMBLY_VERSION} https://github.com/ari
 # HA Ingress: Apply minimal patch to make routes relative
 RUN sed -i "s|: '/|: '|g" src/pages/routes.ts
 
+# Fix SSR Error: Patch navigator usage to be safe
+RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/hooks/use-is-apple.ts
+RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/components/game-buttons/game-buttons.tsx
+
 # Enable and download pnpm
 RUN npm i -g pnpm
 
