@@ -1,5 +1,5 @@
 name: "RetroAssembly"
-version: "1.0.2"
+version: "1.0.3"
 slug: "retroassembly"
 description: "The personal retro game collection cabinet in your browser."
 url: "https://github.com/arianrhodsandlot/retroassembly"
@@ -7,6 +7,7 @@ arch:
   - aarch64
   - amd64
   - armv7
+init: false
 ingress: true
 ingress_port: 8099
 map:
