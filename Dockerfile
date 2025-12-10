@@ -55,4 +55,4 @@ COPY rootfs /
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Use S6 init
-CMD [ "/init" ]
+
