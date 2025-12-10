@@ -21,6 +21,12 @@ RUN sed -i "s|: '/|: '|g" src/pages/routes.ts
 RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/hooks/use-is-apple.ts
 RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/components/game-buttons/game-buttons.tsx
 
+# Fix Service Worker: Create self-destructing sw-modern.js to replace any stuck SW
+RUN echo "self.addEventListener('install', () => self.skipWaiting()); self.addEventListener('activate', (e) => e.waitUntil(Promise.all([self.registration.unregister(), self.clients.claim()])));" > public/sw-modern.js
+
+# Fix Service Worker: Inject inline script to unregister SWs immediately
+RUN sed -i "s|<Head />|<Head /><script dangerouslySetInnerHTML={{ __html: \"if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => r.forEach(s => s.unregister()))\" }} />|g" src/pages/components/app-layout.tsx
+
 # Create directory for default nginx error log to silence alerts
 RUN mkdir -p /var/lib/nginx/logs && ln -sf /dev/stderr /var/lib/nginx/logs/error.log
 
