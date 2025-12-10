@@ -8,4 +8,4 @@ labels:
   org.opencontainers.image.source: "https://github.com/MichalTorma/ha-repository"
   org.opencontainers.image.licenses: "MIT"
 args:
-  RETROASSEMBLY_VERSION: "v4"
+  RETROASSEMBLY_VERSION: "v4.251127.0822"
