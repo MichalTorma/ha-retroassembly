@@ -14,21 +14,9 @@ RUN git clone --depth 1 --branch ${RETROASSEMBLY_VERSION} https://github.com/ari
 # Enable and download pnpm
 RUN npm i -g pnpm
 
-# HA Ingress: Apply minimal patch to make routes relative
-RUN sed -i "s|: '/|: '|g" src/pages/routes.ts
-
 # Fix SSR Error: Patch navigator usage to be safe
 RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/hooks/use-is-apple.ts
 RUN sed -i "s|navigator.userAgent|((typeof navigator !== 'undefined') ? navigator.userAgent : '')|g" src/pages/library/components/game-buttons/game-buttons.tsx
-
-# Fix Service Worker: Create self-destructing sw-modern.js to replace any stuck SW
-RUN echo "self.addEventListener('install', () => self.skipWaiting()); self.addEventListener('activate', (e) => e.waitUntil(Promise.all([self.registration.unregister(), self.clients.claim()])));" > public/sw-modern.js
-
-# Fix Service Worker: Inject inline script to unregister SWs immediately
-RUN sed -i "s|<Head />|<Head /><script dangerouslySetInnerHTML={{ __html: \"if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => r.forEach(s => s.unregister()))\" }} />|g" src/pages/components/app-layout.tsx
-
-# Create directory for default nginx error log to silence alerts
-RUN mkdir -p /var/lib/nginx/logs && ln -sf /dev/stderr /var/lib/nginx/logs/error.log
 
 # Install dependencies and build
 RUN pnpm install
@@ -45,8 +33,7 @@ FROM $BUILD_FROM
 # Install runtime dependencies
 RUN apk add --no-cache \
     nodejs \
-    npm \
-    nginx
+    npm
 
 WORKDIR /app
 
@@ -56,9 +43,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/src/databases/migrations ./src/databases/migrations
 
-# Copy root filesystem (S6 services and nginx config)
+# Copy root filesystem (S6 services)
 COPY rootfs /
-COPY nginx.conf /etc/nginx/nginx.conf
 
 # Use S6 init
-
