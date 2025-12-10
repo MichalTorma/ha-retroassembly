@@ -41,6 +41,7 @@ WORKDIR /app
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src/databases/migrations ./src/databases/migrations
 
 # Copy root filesystem (S6 services and nginx config)
 COPY rootfs /
